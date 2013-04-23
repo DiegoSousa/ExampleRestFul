@@ -1,10 +1,11 @@
 <h1>Example RestFul With Jersey and Junit Test.</h1>
+<br />
 
-<h2>1 - For run the project by line command:</h2>
+<h2>1 - For run the project by line command:
 
 	$ mvn package -Dmaven.test.skip=true tomcat:run
 
-<h2>2 - For run the project by eclipse:</h2>
+<h2>2 - For run the project by eclipse:
 
 **Requirements:**
 
@@ -40,7 +41,7 @@ The End!
 
 **Contact** diego[at]diegosousa[dot]com **or** diego.sousa[at]dce.ufpb.br
 
-<h2>3 - Service testing with the tool linux curl (ps: Do this with Running Server):</h2>
+<h2>3 - Service testing with the tool linux curl (ps: Do this with Running Server):
 
 <h3> See all services</h3>
 
