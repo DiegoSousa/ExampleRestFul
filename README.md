@@ -1,11 +1,9 @@
 <h1>Example RestFul With Jersey and Junit Test.</h1>
------------------------------------
 
 <h2>1 - For run the project by line command:</h2>
 
 	$ mvn package -Dmaven.test.skip=true tomcat:run
 
------------------------------------
 <h2>2 - For run the project by eclipse:</h2>
 
 **Requirements:**
@@ -29,12 +27,12 @@ IDE: Eclipse Java EE indigo+<br />
 
 	$ git clone https://github.com/DiegoSousa/ExampleRestFul.git
 
-**2 - In eclipse go in:** 
+**2.4 - In eclipse go in:** 
 
 	file -> import -> type in the search above "Existing maven projects" -> next -> Browser -> 
 	select the project ExampleRestFull -> Finish.
 
-**3 - Wait until the maven download all libraries.**
+**Wait until the maven download all libraries.**
 
 The End!
 
@@ -42,10 +40,11 @@ The End!
 
 **Contact** diego[at]diegosousa[dot]com **or** diego.sousa[at]dce.ufpb.br
 
-------------------------------------------------------------------------
 <h2>3 - Service testing with the tool linux curl (ps: Do this with Running Server):</h2>
-<br />
+
 <h3> See all services</h3>
+
+**Request:**
 
 	curl -i -X OPTIONS http://localhost:8080/ExampleRestFull/api/person/
 
