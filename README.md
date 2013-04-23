@@ -1,15 +1,14 @@
-Example RestFul With Jersey and Junit Test.
-================
-------------------------------------
+<h1>Example RestFul With Jersey and Junit Test.</h1>
+-----------------------------------
 
-1 - For run the project by line command:
+<h2>1 - For run the project by line command:</h2>
 
 	$ mvn package -Dmaven.test.skip=true tomcat:run
 
-2 - For run the project by eclipse:
 -----------------------------------
+<h2>2 - For run the project by eclipse:</h2>
 
-Requirements:
+**Requirements:**
 
 Maven: Version 2+  
 Web Server: Apache Tomcat 7+  
@@ -44,9 +43,8 @@ The End!
 **Contact** diego[at]diegosousa[dot]com **or** diego.sousa[at]dce.ufpb.br
 
 ------------------------------------------------------------------------
-3 - Service testing with the tool linux curl (ps: Do this with Running Server):
-
-
+<h2>3 - Service testing with the tool linux curl (ps: Do this with Running Server):</h2>
+<br />
 <h3> See all services</h3>
 
 	curl -i -X OPTIONS http://localhost:8080/ExampleRestFull/api/person/
