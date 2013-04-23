@@ -1,4 +1,4 @@
-<h1>Example RestFul With Jersey and Junit Test.</h1>
+<h1>Example RestFul with Jersey and Junit Test.</h1>
 <br />
 
 <h2>1 - For run the project by line command:</h2>
