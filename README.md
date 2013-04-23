@@ -1,6 +1,7 @@
 <h1> Example RestFul.
 
-<h3>1 - For run the project by line command:
+<h3>1 - For run the project by line command:<br />
+
 	mvn package -Dmaven.test.skip=true tomcat:run
 
 <h3>2 - For run the project by eclipse:
@@ -26,12 +27,12 @@ IDE: Eclipse Java EE indigo+<br />
 
 	$ git clone https://github.com/DiegoSousa/ExampleRestFul.git
 
-<b>2 - In eclipse go in:</b> 
+<b>2.4 - In eclipse go in:</b> 
 
 	file -> import -> type in the search above "Existing maven projects" -> next -> Browser -> 
 	select the project ExampleRestFul -> Finish.
 
-<b>3 - Wait until the maven download all libraries.</b>
+<b> Wait until the maven download all libraries.</b>
 
 The End!
 
@@ -42,7 +43,7 @@ The End!
 
 <h2>Service testing with the tool linux curl (ps: Do this with Running Server):
 
-<h3> See all services
+<h3> See all services</h3>
 
 	curl -i -X OPTIONS http://localhost:8080/ExampleRestFul/api/person/
 
