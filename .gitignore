@@ -1,6 +1,76 @@
-*.class
+# IDE Junk
+.classpath
+.project
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.settings
+.loadpath
+.externalToolBuilders/
+.launch
+.cproject
+.buildpath
 
-# Package Files #
+nbproject/private
+nbproject
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Linux
+!.gitignore
+*~
+.directory
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.iso
 *.jar
 *.war
 *.ear
+*.rar
+*.tar
+*.zip
+
+# Logs
+*.log
+*.sql
+*.sqlite
+
+# OS generated files
+.DS_Store?
+enthumbs.db
+Icon?
+Thumbs.db
+._*
+.Spotlight-V100
+.Trashes
+Desktop.ini
+
+# Maven
+target/
+
+#Others
+bin
+classes
+build
+META-INF
+Main.java
