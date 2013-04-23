@@ -41,7 +41,7 @@ public class RestTest {
 	 * @throws java.lang.Exception
 	 */
 	private static WebResource service;
-	private final static String urlRoot = "http://localhost:8080/ExampleRestFull/";
+	private final static String urlRoot = "http://localhost:8080/ExampleRestFul/";
 	private final static String resourcePath = "api";
 	private final static String typeMsg = MediaType.APPLICATION_JSON;
 

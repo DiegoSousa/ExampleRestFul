@@ -11,22 +11,22 @@ diego@diegosousa.com
 
 <b>Request:</b><br />	
 
-	curl -i -X OPTIONS http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X OPTIONS http://localhost:8080/ExampleRestFul/api/person/
 
 <h3>Add Person</h3>
 
 <b>Request:</b>
 <br />
 
-	curl -i -X POST -H "Content-type: application/json" -d '{"name":"Diego","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X POST -H "Content-type: application/json" -d '{"name":"Diego","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFul/api/person/
 <br />	
 <br />
 <b>Response:</b>
 <br />
 	HTTP/1.1 201 Created<br />
 	Server: Apache-Coyote/1.1<br />
-	Location: http://localhost:8080/ExampleRestFull/person/diego@diegosousa.com<br />
-	Content-Location: http://localhost:8080/ExampleRestFull/person/diego@diegosousa.com<br />
+	Location: http://localhost:8080/ExampleRestFul/person/diego@diegosousa.com<br />
+	Content-Location: http://localhost:8080/ExampleRestFul/person/diego@diegosousa.com<br />
 	Content-Type: application/json<br />
 	Transfer-Encoding: chunked<br />
 	Date: Mon, 22 Apr 2013 03:40:25 GMT<br />
@@ -35,7 +35,7 @@ diego@diegosousa.com
 
 <b>Request:</b>
 <br />
-	curl -i -X GET http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
 <br />
 <br />
 <b>Response:</b>
@@ -50,7 +50,7 @@ diego@diegosousa.com
 
 <b>Request:</b>
 <br />
-	curl -i -X GET http://localhost:8080/ExampleRestFull/api/person/diego@diegosousa.com
+	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/diego@diegosousa.com
 <br />
 <br />
 <b>Response:</b>
@@ -65,7 +65,7 @@ diego@diegosousa.com
 
 <b>Request:</b>
 <br />
-	curl -i -X PUT -H "Content-type: application/json" -d '{"name":"Diego2","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X PUT -H "Content-type: application/json" -d '{"name":"Diego2","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFul/api/person/
 <br />
 <br />
 <b>Response:</b>
@@ -78,7 +78,7 @@ diego@diegosousa.com
 
 <b>Request:</b>
 <br />
-	curl -i -X DELETE http://localhost:8080/ExampleRestFull/api/person/diego@diegosousa.com
+	curl -i -X DELETE http://localhost:8080/ExampleRestFul/api/person/diego@diegosousa.com
 <br />
 <br />
 <b>Response:</b>

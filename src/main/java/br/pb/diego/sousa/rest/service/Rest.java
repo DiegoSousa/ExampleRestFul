@@ -34,7 +34,7 @@ import br.pb.diego.sousa.rest.facade.Facade;
 public class Rest {
 
 	private Facade facade = Facade.getInstance();
-	private String uri = "http://localhost:8080/ExampleRestFull/person/";
+	private String uri = "http://localhost:8080/ExampleRestFul/person/";
 
 	/**
 	 * Method GET - Responsible for returning the list of Person.

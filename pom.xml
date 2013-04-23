@@ -2,10 +2,10 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>br.pb.diego.sousa.rest</groupId>
-	<artifactId>ExampleRestFull</artifactId>
+	<artifactId>ExampleRestFul</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ExampleRestFull</name>
+	<name>ExampleRestFul</name>
 	<url>http://www.diegosousa.com</url>
 
 	<developers>
@@ -65,7 +65,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>ExampleRestFull</finalName>
+		<finalName>ExampleRestFul</finalName>
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
