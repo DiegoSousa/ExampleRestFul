@@ -1,6 +1,6 @@
 <h1> Example RestFul.
 
-<h3>1 - For run the project by line command:<br />
+<h3>1 - For run the project by line command:
 
 	mvn package -Dmaven.test.skip=true tomcat:run
 
