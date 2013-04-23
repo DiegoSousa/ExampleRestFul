@@ -43,7 +43,7 @@ The End!
 
 <h2>Service testing with the tool linux curl (ps: Do this with Running Server):
 
-<h3> See all services</h3>
+<h3> See all services
 
 	curl -i -X OPTIONS http://localhost:8080/ExampleRestFul/api/person/
 
