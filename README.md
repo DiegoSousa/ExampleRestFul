@@ -28,7 +28,11 @@ IDE: Eclipse Java EE indigo+<br />
 
 	$ git clone https://github.com/DiegoSousa/ExampleRestFul.git
 
-**2.4 - In eclipse go in:** 
+**2.4 - Create configuration files of eclipse:**
+
+	$ mvn eclipse:eclipse -Dwtpversion=2.0
+
+**2.5 - In eclipse go in:** 
 
 	file -> import -> type in the search above "Existing maven projects" -> next -> Browser -> 
 	select the project ExampleRestFul -> Finish.
