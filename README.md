@@ -31,7 +31,7 @@ IDE: Eclipse Java EE indigo+<br />
 **2.4 - In eclipse go in:** 
 
 	file -> import -> type in the search above "Existing maven projects" -> next -> Browser -> 
-	select the project ExampleRestFull -> Finish.
+	select the project ExampleRestFul -> Finish.
 
 **Wait until the maven download all libraries.**
 
@@ -47,20 +47,20 @@ The End!
 
 **Request:**
 
-	curl -i -X OPTIONS http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X OPTIONS http://localhost:8080/ExampleRestFul/api/person/
 
 <h3>Add Person</h3>
 
 **Request:**
 
-	curl -i -X POST -H "Content-type: application/json" -d '{"name":"Diego","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X POST -H "Content-type: application/json" -d '{"name":"Diego","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFul/api/person/
 
 **Response:**
 
 	HTTP/1.1 201 Created
 	Server: Apache-Coyote/1.1
-	Location: http://localhost:8080/ExampleRestFull/person/diego@diegosousa.com
-	Content-Location: http://localhost:8080/ExampleRestFull/person/diego@diegosousa.com
+	Location: http://localhost:8080/ExampleRestFul/person/diego@diegosousa.com
+	Content-Location: http://localhost:8080/ExampleRestFul/person/diego@diegosousa.com
 	Content-Type: application/json
 	Transfer-Encoding: chunked
 	Date: Mon, 22 Apr 2013 03:40:25 GMT
@@ -69,7 +69,7 @@ The End!
 
 **Request:**
 
-	curl -i -X GET http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
 
 **Response:**
 
@@ -83,7 +83,7 @@ The End!
 
 **Request:**
 
-	curl -i -X GET http://localhost:8080/ExampleRestFull/api/person/diego@diegosousa.com
+	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/diego@diegosousa.com
 
 **Response:**
 
@@ -97,7 +97,7 @@ The End!
 
 **Request:**
 
-	curl -i -X PUT -H "Content-type: application/json" -d '{"name":"Diego2","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFull/api/person/
+	curl -i -X PUT -H "Content-type: application/json" -d '{"name":"Diego2","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFul/api/person/
 
 **Response:**
 
@@ -109,7 +109,7 @@ The End!
 
 **Request:**
 
-	curl -i -X DELETE http://localhost:8080/ExampleRestFull/api/person/diego@diegosousa.com
+	curl -i -X DELETE http://localhost:8080/ExampleRestFul/api/person/diego@diegosousa.com
 
 **Response:**
 
