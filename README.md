@@ -3,7 +3,7 @@
 
 <h2>1 - For run the project by line command:</h2>
 
-	$ mvn package -Dmaven.test.skip=true tomcat:run
+	/ExampleRestFul$ mvn package -Dmaven.test.skip=true tomcat:run
 
 <h2>2 - For run the project by eclipse:</h2>
 
