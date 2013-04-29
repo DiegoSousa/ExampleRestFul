@@ -42,9 +42,9 @@ public class Facade {
 	 *            Person
 	 * @return Object Person
 	 * @exception DataExistingException
-	 *             , if mail exists.
+	 *                , if mail exists.
 	 * @exception NullPointerException
-	 *             , if person equals null
+	 *                , if person equals null
 	 */
 
 	public Person addPerson(Person person) {
@@ -65,9 +65,9 @@ public class Facade {
 	 *            Person
 	 * @return Object Person
 	 * @exception DataNonexistentException
-	 *             , if person not exists.
+	 *                , if person not exists.
 	 * @exception NullPointerException
-	 *             , if person equals null
+	 *                , if person equals null
 	 */
 
 	public Person removePerson(Person person) {
@@ -85,20 +85,23 @@ public class Facade {
 	/**
 	 * Method responsible by Edit a Person.
 	 * 
+	 * @param String
+	 *            mail - Email is the identifier of the object
+	 * 
 	 * @param Object
 	 *            Person
 	 * @return Object Person
 	 * @exception DataNonexistentException
-	 *             , if person not exists.
+	 *                , if person not exists.
 	 * @exception NullPointerException
-	 *             , if person equals null
+	 *                , if person equals null
 	 */
 
-	public Person editPerson(Person person) {
+	public Person editPerson(String mail, Person person) {
 
 		Person personAux = null;
 		try {
-			personAux = personDao.editPerson(person);
+			personAux = personDao.editPerson(mail, person);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -113,7 +116,7 @@ public class Facade {
 	 *            mail
 	 * @return Object Person
 	 * @exception DataNonexistentException
-	 *             , if person not exists.
+	 *                , if person not exists.
 	 */
 
 	public Person findPerson(String mail) {

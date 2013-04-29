@@ -28,7 +28,8 @@ IDE: Eclipse Java EE indigo+<br />
 
 	$ git clone https://github.com/DiegoSousa/ExampleRestFul.git
 
-**2.4 - Create configuration files of eclipse:**
+
+**2.4 - Generate Eclipse IDE files (*.classpath, *.wtpmodules and the .settings folder):**
 
 	$ mvn eclipse:eclipse -Dwtpversion=2.0
 
@@ -47,13 +48,30 @@ The End!
 
 <h2>3 - Service testing with the tool linux curl (ps: Do this with Running Server):</h2>
 
-<h3> See all services</h3>
+<h3> See all services (OPTIONS)</h3>
 
 **Request:**
 
 	curl -i -X OPTIONS http://localhost:8080/ExampleRestFul/api/person/
 
-<h3>Add Person</h3>
+<h3>List All Person (GET)</h3>
+
+**Request:**
+
+	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
+
+**Response:**
+
+	HTTP/1.1 200 OK
+	Server: Apache-Coyote/1.1
+	Content-Type: application/json
+	Transfer-Encoding: chunked
+	Date: Mon, 22 Apr 2013 03:35:58 GMT
+	
+	{"Person":[{"name":"Diego","mail":"diego@diegosousa.com"},{"name":"Sousa","mail":"sousa@diegosousa.com"}]}
+
+
+<h3>Add Person (POST)</h3>
 
 **Request:**
 
@@ -68,22 +86,34 @@ The End!
 	Content-Type: application/json
 	Transfer-Encoding: chunked
 	Date: Mon, 22 Apr 2013 03:40:25 GMT
+	
+	{"mail":"diego@diegosousa.com","name":"Diego"}
 
-<h3>List All Person</h3>
+<h3>Replace list of person (PUT)</h3>
 
 **Request:**
 
-	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
+	curl -i -X PUT -H "Content-type: application/json" -d '[{"name":"DiegoEditedOne","mail":"mailOne@diegosoussa.com"}, {"name":"DiegoEditedTwo", "mail":"mailTwo@diegosousa.com"}]' http://localhost:8080/ExampleRestFul/api/person/
 
 **Response:**
 
-	HTTP/1.1 200 OK
+	HTTP/1.1 204 No Content
 	Server: Apache-Coyote/1.1
-	Content-Type: application/json
-	Transfer-Encoding: chunked
-	Date: Mon, 22 Apr 2013 03:35:58 GMT
+	Date: Mon, 22 Apr 2013 03:47:46 GMT
 
-<h3>Get Person</h3>
+<h3>Delete All Person (DELETE)</h3>
+
+**Request:**
+
+	curl -i -X DELETE http://localhost:8080/ExampleRestFul/api/person/
+
+**Response:**
+
+	HTTP/1.1 204 No Content
+	Server: Apache-Coyote/1.1
+	Date: Mon, 22 Apr 2013 03:48:49 GMT
+
+<h3>Get Person (GET)</h3>
 
 **Request:**
 
@@ -96,12 +126,14 @@ The End!
 	Content-Type: application/json
 	Transfer-Encoding: chunked
 	Date: Mon, 22 Apr 2013 03:43:10 GMT
+	
+	{"mail":"diego@diegosousa.com","name":"Diego"}
 
-<h3>Edit Person</h3>
+<h3>Edit Person (PUT)</h3>
 
 **Request:**
 
-	curl -i -X PUT -H "Content-type: application/json" -d '{"name":"Diego2","mail":"diego@diegosousa.com"}' http://localhost:8080/ExampleRestFul/api/person/
+	curl -i -X PUT -H "Content-type: application/json" -d '{"name":"DiegoEdited","mail":"mailEdited@diegosousa.com"}' http://localhost:8080/ExampleRestFul/api/person/diego@diegosousa.com
 
 **Response:**
 
@@ -109,7 +141,7 @@ The End!
 	Server: Apache-Coyote/1.1
 	Date: Mon, 22 Apr 2013 03:47:46 GMT
 
-<h3>Delete Person</h3>
+<h3>Delete Person (DELETE)</h3>
 
 **Request:**
 

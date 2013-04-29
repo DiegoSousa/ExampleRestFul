@@ -88,6 +88,9 @@ public class PersonDAO {
 	/**
 	 * Method responsible by Edit a Person.
 	 * 
+	 * @param String
+	 *            mail - Email is the identifier of the object
+	 * 
 	 * @param Object
 	 *            Person
 	 * @return Object Person
@@ -97,12 +100,12 @@ public class PersonDAO {
 	 *             , if person equals null
 	 */
 
-	public Person editPerson(Person person) throws DataNonexistentException,
-			NullPointerException {
+	public Person editPerson(String mail, Person person)
+			throws DataNonexistentException, NullPointerException {
 
 		if (person != null) {
 			for (Person personAux : persons) {
-				if (personAux.getMail().equals(person.getMail())) {
+				if (personAux.getMail().equals(mail)) {
 					persons.remove(personAux);
 					persons.add(person);
 					logger.info("Person: " + person.getName()

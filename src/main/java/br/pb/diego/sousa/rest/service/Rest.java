@@ -1,6 +1,7 @@
 package br.pb.diego.sousa.rest.service;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -62,33 +63,7 @@ public class Rest {
 			} catch (JSONException jse) {
 				jse.printStackTrace();
 			}
-			return Response.status(200).type(MediaType.APPLICATION_JSON)
-					.entity(jObject).build();
-		}
-		// Status code 500 - The server encountered an unexpected condition
-		// which prevented it from fulfilling the request.
-		return Response.status(500).build();
-
-	}
-
-	/**
-	 * Method GET - Responsible by find a Person.
-	 * 
-	 * @param String
-	 *            mail of Person
-	 * 
-	 * @return Object Response with the json of Person e the data of network.
-	 */
-
-	@GET
-	@Path("{mail}")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getPerson(@PathParam("mail") String mail) {
-		Person person = facade.findPerson(mail);
-
-		if (person != null) {
-			return Response.status(200).type(MediaType.APPLICATION_JSON)
-					.entity(person).build();
+			return Response.status(200).entity(jObject).build();
 		}
 		// Status code 500 - The server encountered an unexpected condition
 		// which prevented it from fulfilling the request.
@@ -107,21 +82,103 @@ public class Rest {
 
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
 	public Response addPerson(Person person) {
 
-		Person personAux = facade.addPerson(person);
+		Person personAux;
 
-		if (personAux != null) {
+		if ((personAux = facade.addPerson(person)) != null) {
 			URI uriAux = UriBuilder.fromUri(uri + personAux.getMail()).build();
 			return Response.status(201).location(uriAux)
-					.contentLocation(uriAux).type(MediaType.APPLICATION_JSON)
-					.entity(personAux).build();
+					.contentLocation(uriAux).entity(personAux).build();
 		}
 		return Response.status(500).build();
 	}
 
 	/**
+	 * Method PUT - Responsible by update the list of Person.
+	 * 
+	 * @param ArrayList
+	 *            of Person.
+	 * 
+	 * @return Object Response with the data of network.
+	 * 
+	 *         CAUTION: Implement a security algorithm such as OAuth for this
+	 *         method, because a malicious person can REPLACE all your data.
+	 * 
+	 */
+
+	@PUT
+	@Consumes(MediaType.APPLICATION_JSON)
+	public Response editAllPerson(JSONArray jsonArray) {
+
+		List<Person> list = new ArrayList<Person>();
+		Person person;
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			person = new Person();
+			try {
+				person.setName(jsonArray.getJSONObject(i).getString("name"));
+				person.setMail(jsonArray.getJSONObject(i).getString("mail"));
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			list.add(person);
+		}
+
+		facade.clearList();
+
+		if ((facade.listAllPerson().addAll(0, list))) {
+			return Response.status(204).build();
+		}
+		return Response.status(500).build();
+	}
+
+	/**
+	 * Method DELETE - Responsible by Remove all Persons.
+	 * 
+	 * @return Object Response with the data of network.
+	 * 
+	 *         CAUTION: Implement a security algorithm such as OAuth for this
+	 *         method, because a malicious person can DESTROY all your data.
+	 * 
+	 */
+
+	@DELETE
+	public Response removeAllPerson() {
+		facade.clearList();
+		return Response.status(204).build();
+	}
+
+	/**
+	 * Method GET - Responsible by find a Person.
+	 * 
+	 * @param String
+	 *            mail of Person
+	 * 
+	 * @return Object Response with the json of Person e the data of network.
+	 */
+
+	@GET
+	@Path("{mail}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getPerson(@PathParam("mail") String mail) {
+		Person person;
+
+		if ((person = facade.findPerson(mail)) != null) {
+			return Response.status(200).entity(person).build();
+		}
+		// Status code 500 - The server encountered an unexpected condition
+		// which prevented it from fulfilling the request.
+		return Response.status(500).build();
+
+	}
+
+	/**
 	 * Method PUT - Responsible by Edit a Person.
+	 * 
+	 * @param String
+	 *            mail - Email is the identifier of the object
 	 * 
 	 * @param Object
 	 *            Person
@@ -130,12 +187,11 @@ public class Rest {
 	 */
 
 	@PUT
+	@Path("{mail}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response editPerson(Person person) {
+	public Response editPerson(@PathParam("mail") String mail, Person person) {
 
-		Person personAux = facade.editPerson(person);
-
-		if (personAux != null) {
+		if ((facade.editPerson(mail, person)) != null) {
 			return Response.status(204).build();
 		}
 		return Response.status(500).build();
@@ -152,29 +208,14 @@ public class Rest {
 
 	@DELETE
 	@Path("{mail}")
-	@Produces(MediaType.APPLICATION_JSON)
 	public Response removePerson(@PathParam("mail") String mail) {
 		Person person;
 		if ((person = facade.findPerson(mail)) != null) {
 			if (facade.removePerson(person) != null) {
-
 				return Response.status(204).build();
 			}
 			return Response.status(500).build();
 		}
 		return Response.status(500).build();
-	}
-
-	/**
-	 * Method responsible for clear all list.
-	 * 
-	 * @return Object Response with the data of network.
-	 */
-
-	@DELETE
-	@Path("/clearlist")
-	public Response clearList() {
-		facade.clearList();
-		return Response.status(204).build();
 	}
 }

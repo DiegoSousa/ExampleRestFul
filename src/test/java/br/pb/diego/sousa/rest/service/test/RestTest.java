@@ -37,18 +37,15 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 public class RestTest {
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	private static WebResource service;
-	private final static String urlRoot = "http://localhost:8080/ExampleRestFul/";
+	private final static String uriRoot = "http://localhost:8080/ExampleRestFul/";
 	private final static String resourcePath = "api";
 	private final static String typeMsg = MediaType.APPLICATION_JSON;
 
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		service = Client.create(new DefaultClientConfig()).resource(
-				UriBuilder.fromUri(urlRoot).build());
+				UriBuilder.fromUri(uriRoot).build());
 	}
 
 	/**
@@ -63,7 +60,7 @@ public class RestTest {
 	 * Clean persistence.
 	 * 
 	 * @throws java.lang.Exception
-	 *             Ps: Code 204 is a success message unanswered.
+	 *             Ps: Code 204 is a success message without body.
 	 */
 	@Before
 	public void setUp() throws Exception {
@@ -93,8 +90,8 @@ public class RestTest {
 			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
 
 			// AddObject
-			ClientResponse crAddPerson = getResourceAddPerson(jsonObjectAddPerson);
-			assertEquals(200, crAddPerson.getStatus());
+			ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
+			assertEquals(201, crAddPerson.getStatus());
 
 			jsonObjectAddPersonOut = new JSONObject(
 					crAddPerson.getEntity(String.class));
@@ -117,16 +114,14 @@ public class RestTest {
 	public void testRemovePerson() {
 
 		JSONObject jsonObjectAddPersonOut = null;
-		JSONObject jsonObjectRemovePersonOut = null;
-		JSONObject jsonObjectPerson = new JSONObject();
-		
+		JSONObject jsonObjectAddPerson = new JSONObject();
 		try {
-			jsonObjectPerson.put("name", "diego");
-			jsonObjectPerson.put("mail", "diego@diegosousa.com");
+			jsonObjectAddPerson.put("name", "diego");
+			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
 
 			// AddObject
-			ClientResponse crAddPerson = getResourceAddPerson(jsonObjectPerson);
-			assertEquals(200, crAddPerson.getStatus());
+			ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
+			assertEquals(201, crAddPerson.getStatus());
 
 			jsonObjectAddPersonOut = new JSONObject(
 					crAddPerson.getEntity(String.class));
@@ -135,14 +130,8 @@ public class RestTest {
 					jsonObjectAddPersonOut.getString("mail"));
 
 			// RemoveObject
-			ClientResponse crRemovePerson = getResourceRemovePerson(jsonObjectPerson);
-			assertEquals(200, crRemovePerson.getStatus());
-
-			jsonObjectRemovePersonOut = new JSONObject(
-					crRemovePerson.getEntity(String.class));
-
-			assertEquals("diego@diegosousa.com",
-					jsonObjectRemovePersonOut.getString("mail"));
+			ClientResponse crRemovePerson = getResourceDelete("diego@diegosousa.com");
+			assertEquals(204, crRemovePerson.getStatus());
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -158,28 +147,21 @@ public class RestTest {
 	@Test
 	public void testEditPerson() {
 		// Create Json
+		JSONObject jsonObjectAddPersonOut = null;
 		JSONObject jsonObjectAddPerson = new JSONObject();
 		try {
 			jsonObjectAddPerson.put("name", "diego");
 			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
 
-		// AddObject
-		ClientResponse crAddPerson = getResourceAddPerson(jsonObjectAddPerson);
-		assertEquals(200, crAddPerson.getStatus());
-		assertEquals("diego@diegosousa.com", crAddPerson
-				.getEntity(Person.class).getMail());
+			// AddObject
+			ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
+			assertEquals(201, crAddPerson.getStatus());
 
-		// Getting the List All Person and checks if "diego" was add.
-		ClientResponse crListAllPerson = getResourceListAllPerson();
-		List<Person> listAllPerson = crListAllPerson
-				.getEntity(new GenericType<List<Person>>() {
-				});
-		assertEquals(200, crListAllPerson.getStatus());
-		assertEquals(1, listAllPerson.size());
-		assertTrue(listAllPerson.get(0).getName().equals("diego"));
+			jsonObjectAddPersonOut = new JSONObject(
+					crAddPerson.getEntity(String.class));
+
+			assertEquals("diego@diegosousa.com",
+					jsonObjectAddPersonOut.getString("mail"));	
 
 		// Edit the Object
 		JSONObject jsonObjectEditPerson = new JSONObject();
@@ -189,11 +171,11 @@ public class RestTest {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		ClientResponse CREditPerson = getResourceEditPerson(jsonObjectEditPerson);
+		ClientResponse CREditPerson = getResourcePut(jsonObjectEditPerson);
 		assertEquals(200, CREditPerson.getStatus());
 
 		// Getting the List All Person and checks if "diego" was edited.
-		ClientResponse crListAllPersonTwo = getResourceListAllPerson();
+		ClientResponse crListAllPersonTwo = getResourceGetAll();
 		List<Person> listAllPersonTwo = crListAllPersonTwo
 				.getEntity(new GenericType<List<Person>>() {
 				});
@@ -218,13 +200,13 @@ public class RestTest {
 		}
 
 		// AddObject
-		ClientResponse crAddPerson = getResourceAddPerson(jsonObjectAddPerson);
+		ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
 		assertEquals(200, crAddPerson.getStatus());
 		assertEquals("diego@diegosousa.com", crAddPerson
 				.getEntity(Person.class).getMail());
 
 		// Getting the List All Person and checks if "diego" was add.
-		ClientResponse ClientPerson = getResourceFindPerson(jsonObjectAddPerson);
+		ClientResponse ClientPerson = getResourceGet(jsonObjectAddPerson);
 		Person person = ClientPerson.getEntity(Person.class);
 		assertEquals(200, ClientPerson.getStatus());
 		assertEquals("diego@diegosousa.com", person.getMail());
@@ -256,19 +238,19 @@ public class RestTest {
 		}
 
 		// AddObjectDiego
-		ClientResponse crAddDiego = getResourceAddPerson(jsonObjectDiego);
+		ClientResponse crAddDiego = getResourcePost(jsonObjectDiego);
 		assertEquals(200, crAddDiego.getStatus());
 		assertEquals("diego@diegosousa.com", crAddDiego.getEntity(Person.class)
 				.getMail());
 
 		// AddObjectMaria
-		ClientResponse crAddMaria = getResourceAddPerson(jsonObjectMaria);
+		ClientResponse crAddMaria = getResourcePost(jsonObjectMaria);
 		assertEquals(200, crAddMaria.getStatus());
 		assertEquals("maria@maria.com", crAddMaria.getEntity(Person.class)
 				.getMail());
 
 		// Getting the List All Person and checks if "diego" was add.
-		ClientResponse crListAllPerson = getResourceListAllPerson();
+		ClientResponse crListAllPerson = getResourceGetAll();
 		List<Person> listAllPerson = crListAllPerson
 				.getEntity(new GenericType<List<Person>>() {
 				});
@@ -277,32 +259,29 @@ public class RestTest {
 
 	}
 
-	public ClientResponse getResourceAddPerson(Object jsonObject) {
-		return service.path(resourcePath).path("person").path("addperson")
-				.accept(typeMsg).post(ClientResponse.class, jsonObject);
+	public ClientResponse getResourceGet(String mail) {
+		return service.path(resourcePath).path("person")
+				.queryParam("mail", mail).get(ClientResponse.class);
 	}
 
-	public ClientResponse getResourceRemovePerson(Object jsonObject) {
-
-		return service.path(resourcePath).path("person").path("removeperson")
-				.accept(typeMsg).delete(ClientResponse.class, jsonObject);
+	public ClientResponse getResourceGetAll() {
+		return service.path(resourcePath).path("person")
+				.get(ClientResponse.class);
 	}
 
-	public ClientResponse getResourceEditPerson(Object jsonObject) {
-		return service.path(resourcePath).path("person").path("editperson")
-				.accept(typeMsg).put(ClientResponse.class, jsonObject);
+	public ClientResponse getResourcePost(Object jsonObject) {
+		return service.path(resourcePath).path("person").accept(typeMsg)
+				.post(ClientResponse.class, jsonObject);
 	}
 
-	public ClientResponse getResourceListAllPerson() {
-		return service.path(resourcePath).path("person").path("listallperson")
-				.accept(typeMsg).get(ClientResponse.class);
-
+	public ClientResponse getResourcePut(Object jsonObject) {
+		return service.path(resourcePath).path("person").accept(typeMsg)
+				.put(ClientResponse.class, jsonObject);
 	}
 
-	public ClientResponse getResourceFindPerson(Object jsonObject) {
-		return service.path(resourcePath).path("person").path("findperson")
-				.accept(typeMsg).post(ClientResponse.class, jsonObject);
-
+	public ClientResponse getResourceDelete(String mail) {
+		return service.path(resourcePath).path("person")
+				.queryParam("mail", mail).delete(ClientResponse.class);
 	}
 
 	public ClientResponse getResourceClearList() {
