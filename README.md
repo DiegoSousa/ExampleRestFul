@@ -20,7 +20,7 @@ IDE: Eclipse Java EE indigo+<br />
 
 <h3>To correctly import the application just follow the following steps.</h3>
 
-**2.2 - Using a Terminal or a Customer Git, do the clone within your workspace.**
+**2.2 - Using a Terminal or a client Git, do the clone within your workspace.**
 
 	$ cd ~/workspace/
 
@@ -54,24 +54,7 @@ The End!
 
 	curl -i -X OPTIONS http://localhost:8080/ExampleRestFul/api/person/
 
-<h3>List All Person (GET)</h3>
-
-**Request:**
-
-	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
-
-**Response:**
-
-	HTTP/1.1 200 OK
-	Server: Apache-Coyote/1.1
-	Content-Type: application/json
-	Transfer-Encoding: chunked
-	Date: Mon, 22 Apr 2013 03:35:58 GMT
-	
-	{"Person":[{"name":"Diego","mail":"diego@diegosousa.com"},{"name":"Sousa","mail":"sousa@diegosousa.com"}]}
-
-
-<h3>Add Person (POST)</h3>
+<h3>Add person (POST)</h3>
 
 **Request:**
 
@@ -89,6 +72,24 @@ The End!
 	
 	{"mail":"diego@diegosousa.com","name":"Diego"}
 
+
+<h3>List all person (GET)</h3>
+
+**Request:**
+
+        curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
+
+**Response:**
+
+        HTTP/1.1 200 OK
+        Server: Apache-Coyote/1.1
+        Content-Type: application/json
+        Transfer-Encoding: chunked
+        Date: Mon, 22 Apr 2013 03:35:58 GMT
+
+        {"Person":[{"name":"Diego","mail":"diego@diegosousa.com"},{"name":"Sousa","mail":"sousa@diegosousa.com"}]}
+
+
 <h3>Replace list of person (PUT)</h3>
 
 **Request:**
@@ -101,7 +102,7 @@ The End!
 	Server: Apache-Coyote/1.1
 	Date: Mon, 22 Apr 2013 03:47:46 GMT
 
-<h3>Delete All Person (DELETE)</h3>
+<h3>Delete all person (DELETE)</h3>
 
 **Request:**
 
@@ -113,7 +114,7 @@ The End!
 	Server: Apache-Coyote/1.1
 	Date: Mon, 22 Apr 2013 03:48:49 GMT
 
-<h3>Get Person (GET)</h3>
+<h3>Get person (GET)</h3>
 
 **Request:**
 
@@ -129,7 +130,7 @@ The End!
 	
 	{"mail":"diego@diegosousa.com","name":"Diego"}
 
-<h3>Edit Person (PUT)</h3>
+<h3>Edit person (PUT)</h3>
 
 **Request:**
 
@@ -141,7 +142,7 @@ The End!
 	Server: Apache-Coyote/1.1
 	Date: Mon, 22 Apr 2013 03:47:46 GMT
 
-<h3>Delete Person (DELETE)</h3>
+<h3>Delete person (DELETE)</h3>
 
 **Request:**
 
