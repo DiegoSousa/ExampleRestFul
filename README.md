@@ -77,17 +77,17 @@ The End!
 
 **Request:**
 
-        curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
+	curl -i -X GET http://localhost:8080/ExampleRestFul/api/person/
 
 **Response:**
 
-        HTTP/1.1 200 OK
-        Server: Apache-Coyote/1.1
-        Content-Type: application/json
-        Transfer-Encoding: chunked
-        Date: Mon, 22 Apr 2013 03:35:58 GMT
-
-        {"Person":[{"name":"Diego","mail":"diego@diegosousa.com"},{"name":"Sousa","mail":"sousa@diegosousa.com"}]}
+	HTTP/1.1 200 OK
+	Server: Apache-Coyote/1.1
+	Content-Type: application/json
+	Transfer-Encoding: chunked
+	Date: Mon, 22 Apr 2013 03:35:58 GMT
+	
+	{"Person":[{"name":"Diego","mail":"diego@diegosousa.com"},{"name":"Sousa","mail":"sousa@diegosousa.com"}]}
 
 
 <h3>Replace list of person (PUT)</h3>
