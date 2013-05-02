@@ -35,8 +35,34 @@ import br.pb.diego.sousa.rest.facade.Facade;
 public class Rest {
 
 	private Facade facade = Facade.getInstance();
-	private String uri = "http://localhost:8080/ExampleRestFul/person/";
+	private String uri = "http://localhost:8080/ExampleRestFul/api/person/";
+	
+	
+	/**
+	 * Method POST - Responsible by add a Person.
+	 * 
+	 * @param Object
+	 *            Person
+	 * 
+	 * @return Object Response with the data of network.
+	 */
 
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response addPerson(Person person) {
+
+		Person personAux;
+
+		if ((personAux = facade.addPerson(person)) != null) {
+			URI uriAux = UriBuilder.fromUri(uri + personAux.getMail()).build();
+			return Response.status(201).location(uriAux)
+					.contentLocation(uriAux).entity(personAux).build();
+		}
+		return Response.status(500).build();
+	}	
+
+	
 	/**
 	 * Method GET - Responsible for returning the list of Person.
 	 * 
@@ -71,29 +97,7 @@ public class Rest {
 
 	}
 
-	/**
-	 * Method POST - Responsible by add a Person.
-	 * 
-	 * @param Object
-	 *            Person
-	 * 
-	 * @return Object Response with the data of network.
-	 */
-
-	@POST
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response addPerson(Person person) {
-
-		Person personAux;
-
-		if ((personAux = facade.addPerson(person)) != null) {
-			URI uriAux = UriBuilder.fromUri(uri + personAux.getMail()).build();
-			return Response.status(201).location(uriAux)
-					.contentLocation(uriAux).entity(personAux).build();
-		}
-		return Response.status(500).build();
-	}
+	
 
 	/**
 	 * Method PUT - Responsible by update the list of Person.
@@ -110,7 +114,7 @@ public class Rest {
 
 	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response editAllPerson(JSONArray jsonArray) {
+	public Response updateListOfPerson(JSONArray jsonArray) {
 
 		List<Person> list = new ArrayList<Person>();
 		Person person;
@@ -189,8 +193,7 @@ public class Rest {
 	@PUT
 	@Path("{mail}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public Response editPerson(@PathParam("mail") String mail, Person person) {
-
+	public Response editPerson(@PathParam("mail") String mail, Person person) {		
 		if ((facade.editPerson(mail, person)) != null) {
 			return Response.status(204).build();
 		}
@@ -209,6 +212,7 @@ public class Rest {
 	@DELETE
 	@Path("{mail}")
 	public Response removePerson(@PathParam("mail") String mail) {
+				
 		Person person;
 		if ((person = facade.findPerson(mail)) != null) {
 			if (facade.removePerson(person) != null) {

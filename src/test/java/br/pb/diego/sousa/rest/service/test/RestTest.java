@@ -1,16 +1,11 @@
-/**
- * 
- */
 package br.pb.diego.sousa.rest.service.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-import java.util.List;
+import static org.junit.Assert.*;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 
+import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 import org.junit.After;
@@ -19,11 +14,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import br.pb.diego.sousa.rest.entity.Person;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.GenericType;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
@@ -33,17 +25,40 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
  * @author Diego Sousa, diego[at]diegosousa[dot]com
  * @version 0.0.1
  * @since 02/11/2012
+ * 
+ * Resources:
+ * 
+ * ${UrlFull}
+ * 
+ * Post One Person 
+ * GET ALL 
+ * Put ALL 
+ * Delete All
+ * 
+ * ${UrlFull}/{value}
+ * 
+ * GET One Person 
+ * PUT One Person 
+ * Delete One Person
+ * 
  */
 
 public class RestTest {
 
 	private static WebResource service;
-	private final static String uriRoot = "http://localhost:8080/ExampleRestFul/";
-	private final static String resourcePath = "api";
-	private final static String typeMsg = MediaType.APPLICATION_JSON;
+	private static String uriRoot = "http://localhost:8080/ExampleRestFul/";
+	private String resourcePath = "api/";
+	private String pathPerson = "person/";
+	private String UrlFull = uriRoot + resourcePath;
+	private String typeMsg = MediaType.APPLICATION_JSON;
+	private JSONObject entityJsonIn;
 
+	/**
+	 * @throws java.lang.Exception
+	 */
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
+		System.out.println("Starting the test facade class...");
 		service = Client.create(new DefaultClientConfig()).resource(
 				UriBuilder.fromUri(uriRoot).build());
 	}
@@ -53,19 +68,20 @@ public class RestTest {
 	 */
 	@AfterClass
 	public static void tearDownAfterClass() throws Exception {
+		System.out.println("Finished the test facade class!");
 	}
 
 	/**
 	 * 
-	 * Clean persistence.
+	 * Clean list of date.
 	 * 
 	 * @throws java.lang.Exception
 	 *             Ps: Code 204 is a success message without body.
 	 */
 	@Before
 	public void setUp() throws Exception {
-		ClientResponse crClearList = getResourceClearList();
-		assertEquals(204, crClearList.getStatus());
+		// Excluding all resources and testing the status code of the response.
+		assertEquals(204, getResourceDeleteAll().getStatus());
 	}
 
 	/**
@@ -80,137 +96,59 @@ public class RestTest {
 	 * {@link br.pb.diego.sousa.rest.service.Rest#addPerson(br.pb.diego.sousa.rest.entity.Person)}
 	 * .
 	 */
-
 	@Test
-	public void testAddPerson() {
-		JSONObject jsonObjectAddPersonOut = null;
-		JSONObject jsonObjectAddPerson = new JSONObject();
+	public final void testAddPerson() {
+
+		JSONObject entityJsonOut;
+
+		// ******* Adding Object***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
 		try {
-			jsonObjectAddPerson.put("name", "diego");
-			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
 
-			// AddObject
-			ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
-			assertEquals(201, crAddPerson.getStatus());
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
 
-			jsonObjectAddPersonOut = new JSONObject(
-					crAddPerson.getEntity(String.class));
-
+			// Verifying entity in body.
 			assertEquals("diego@diegosousa.com",
-					jsonObjectAddPersonOut.getString("mail"));
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person and checks if "diego" was edited.
+			ClientResponse crListAllPerson = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+			JSONArray jsonArray = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(1, jsonArray.length());
+			assertEquals("diego", jsonArray.getJSONObject(0).getString("name"));
 
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-
-	}
-
-	/**
-	 * Test method for
-	 * {@link br.pb.diego.sousa.rest.service.Rest#removePerson(br.pb.diego.sousa.rest.entity.Person)}
-	 * .
-	 */
-	@Test
-	public void testRemovePerson() {
-
-		JSONObject jsonObjectAddPersonOut = null;
-		JSONObject jsonObjectAddPerson = new JSONObject();
-		try {
-			jsonObjectAddPerson.put("name", "diego");
-			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
-
-			// AddObject
-			ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
-			assertEquals(201, crAddPerson.getStatus());
-
-			jsonObjectAddPersonOut = new JSONObject(
-					crAddPerson.getEntity(String.class));
-
-			assertEquals("diego@diegosousa.com",
-					jsonObjectAddPersonOut.getString("mail"));
-
-			// RemoveObject
-			ClientResponse crRemovePerson = getResourceDelete("diego@diegosousa.com");
-			assertEquals(204, crRemovePerson.getStatus());
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	/**
-	 * Test method for
-	 * {@link br.pb.diego.sousa.rest.service.Rest#editPerson(br.pb.diego.sousa.rest.entity.Person)}
-	 * .
-	 */
-	@Test
-	public void testEditPerson() {
-		// Create Json
-		JSONObject jsonObjectAddPersonOut = null;
-		JSONObject jsonObjectAddPerson = new JSONObject();
-		try {
-			jsonObjectAddPerson.put("name", "diego");
-			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
-
-			// AddObject
-			ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
-			assertEquals(201, crAddPerson.getStatus());
-
-			jsonObjectAddPersonOut = new JSONObject(
-					crAddPerson.getEntity(String.class));
-
-			assertEquals("diego@diegosousa.com",
-					jsonObjectAddPersonOut.getString("mail"));	
-
-		// Edit the Object
-		JSONObject jsonObjectEditPerson = new JSONObject();
-		try {
-			jsonObjectEditPerson.put("name", "Fulano");
-			jsonObjectEditPerson.put("mail", "diego@diegosousa.com");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		ClientResponse CREditPerson = getResourcePut(jsonObjectEditPerson);
-		assertEquals(200, CREditPerson.getStatus());
-
-		// Getting the List All Person and checks if "diego" was edited.
-		ClientResponse crListAllPersonTwo = getResourceGetAll();
-		List<Person> listAllPersonTwo = crListAllPersonTwo
-				.getEntity(new GenericType<List<Person>>() {
-				});
-		assertEquals(200, crListAllPersonTwo.getStatus());
-		assertEquals(1, listAllPersonTwo.size());
-		assertTrue(listAllPersonTwo.get(0).getName().equals("Fulano"));
-
-	}
-
-	/**
-	 * Test method for
-	 * {@link br.pb.diego.sousa.rest.service.Rest#findPerson(java.lang.String)}.
-	 */
-	@Test
-	public void testFindPerson() {
-		// Create Json
-		JSONObject jsonObjectAddPerson = new JSONObject();
-		try {
-			jsonObjectAddPerson.put("mail", "diego@diegosousa.com");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-
-		// AddObject
-		ClientResponse crAddPerson = getResourcePost(jsonObjectAddPerson);
-		assertEquals(200, crAddPerson.getStatus());
-		assertEquals("diego@diegosousa.com", crAddPerson
-				.getEntity(Person.class).getMail());
-
-		// Getting the List All Person and checks if "diego" was add.
-		ClientResponse ClientPerson = getResourceGet(jsonObjectAddPerson);
-		Person person = ClientPerson.getEntity(Person.class);
-		assertEquals(200, ClientPerson.getStatus());
-		assertEquals("diego@diegosousa.com", person.getMail());
-
 	}
 
 	/**
@@ -218,76 +156,607 @@ public class RestTest {
 	 * {@link br.pb.diego.sousa.rest.service.Rest#listAllPerson()}.
 	 */
 	@Test
-	public void testListAllPerson() {
-		// Create Json
-		JSONObject jsonObjectDiego = new JSONObject();
+	public final void testListAllPerson() {
+		JSONObject entityJsonOut;
+
+		// ******* Adding Object***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
 		try {
-			jsonObjectDiego.put("name", "diego");
-			jsonObjectDiego.put("mail", "diego@diegosousa.com");
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
+
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
+
+			// Verifying entity in body.
+			assertEquals("diego@diegosousa.com",
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person and checks if "diego" was edited.
+			ClientResponse crListAllPerson = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+			JSONArray jsonArray = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(1, jsonArray.length());
+			assertEquals("diego", jsonArray.getJSONObject(0).getString("name"));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link br.pb.diego.sousa.rest.service.Rest#updateListOfPerson(org.codehaus.jettison.json.JSONArray)}
+	 * .
+	 */
+	@Test
+	public final void testUpdateListOfPerson() {
+
+		JSONObject entityJsonOut;
+		JSONObject entityJsonOutTwo;
+
+		// ******* AddObject***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+		ClientResponse crAddPersonTwo = getResourcePost(createJson("maria",
+				"maria@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+		assertEquals(201, crAddPersonTwo.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
+		assertEquals(MediaType.valueOf(typeMsg), crAddPersonTwo.getType());
+
+		try {
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
+
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("maria", "maria@diegosousa.com")
+									.getString("mail"), crAddPersonTwo
+							.getLocation().toString());
+
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
+			entityJsonOutTwo = new JSONObject(
+					crAddPersonTwo.getEntity(String.class));
+
+			// Verifying entity in body.
+			assertEquals("diego@diegosousa.com",
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			assertEquals("maria@diegosousa.com",
+					entityJsonOutTwo.getString("mail"));
+			assertEquals("maria", entityJsonOutTwo.getString("name"));
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person.
+			ClientResponse crListAllPerson = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+			// Getting the List.
+			JSONArray jsonArrayAllPersonOne = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(2, jsonArrayAllPersonOne.length());
+
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 
-		// Create Json
-		JSONObject jsonObjectMaria = new JSONObject();
-		try {
-			jsonObjectMaria.put("name", "maria");
-			jsonObjectMaria.put("mail", "maria@maria.com");
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
+		// ******* Replace all list of person ***********
 
-		// AddObjectDiego
-		ClientResponse crAddDiego = getResourcePost(jsonObjectDiego);
-		assertEquals(200, crAddDiego.getStatus());
-		assertEquals("diego@diegosousa.com", crAddDiego.getEntity(Person.class)
-				.getMail());
+		JSONArray jsonArrayAddPerson = new JSONArray();
+		jsonArrayAddPerson.put(createJson("Fulano", "fulano@diegosousa.com"));
+		jsonArrayAddPerson
+				.put(createJson("Beltrano", "beltrano@diegosousa.com"));
+		jsonArrayAddPerson.put(createJson("Bia", "bia@diegosousa.com"));
 
-		// AddObjectMaria
-		ClientResponse crAddMaria = getResourcePost(jsonObjectMaria);
-		assertEquals(200, crAddMaria.getStatus());
-		assertEquals("maria@maria.com", crAddMaria.getEntity(Person.class)
-				.getMail());
+		// Replace list of person and verifying status code.
+		assertEquals(204, getResourcePutList(jsonArrayAddPerson).getStatus());
 
-		// Getting the List All Person and checks if "diego" was add.
+		// ******* Getting the list all of person ***********
+
+		// Getting the List All Person and checks if the list was edited.
 		ClientResponse crListAllPerson = getResourceGetAll();
-		List<Person> listAllPerson = crListAllPerson
-				.getEntity(new GenericType<List<Person>>() {
-				});
+
+		// Verifying status code
 		assertEquals(200, crListAllPerson.getStatus());
-		assertEquals(2, listAllPerson.size());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+		try {
+			JSONArray jsonArrayAllPersonTwo = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(3, jsonArrayAllPersonTwo.length());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link br.pb.diego.sousa.rest.service.Rest#removeAllPerson()}.
+	 */
+	@Test
+	public final void testRemoveAllPerson() {
+
+		JSONObject entityJsonOut;
+		JSONObject entityJsonOutTwo;
+
+		// ******* AddObject***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+		ClientResponse crAddPersonTwo = getResourcePost(createJson("maria",
+				"maria@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+		assertEquals(201, crAddPersonTwo.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
+		assertEquals(MediaType.valueOf(typeMsg), crAddPersonTwo.getType());
+
+		try {
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
+
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("maria", "maria@diegosousa.com")
+									.getString("mail"), crAddPersonTwo
+							.getLocation().toString());
+
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
+			entityJsonOutTwo = new JSONObject(
+					crAddPersonTwo.getEntity(String.class));
+
+			// Verifying entity in body.
+			assertEquals("diego@diegosousa.com",
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			assertEquals("maria@diegosousa.com",
+					entityJsonOutTwo.getString("mail"));
+			assertEquals("maria", entityJsonOutTwo.getString("name"));
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person.
+			ClientResponse crListAllPerson = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+			JSONArray jsonArrayAllPersonOne = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(2, jsonArrayAllPersonOne.length());
+
+			// ******* Removing All Person ***********
+
+			// Removing Object and testing code status.
+			assertEquals(204, getResourceDeleteAll().getStatus());
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person.
+			ClientResponse crListAllPersonTwo = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPersonTwo.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg),
+					crListAllPersonTwo.getType());
+
+			JSONArray jsonArrayAllPersonTwo = new JSONObject(
+					crListAllPersonTwo.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(0, jsonArrayAllPersonTwo.length());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
 	}
 
-	public ClientResponse getResourceGet(String mail) {
-		return service.path(resourcePath).path("person")
-				.queryParam("mail", mail).get(ClientResponse.class);
+	/**
+	 * Test method for
+	 * {@link br.pb.diego.sousa.rest.service.Rest#getPerson(java.lang.String)}.
+	 */
+	@Test
+	public final void testGetPerson() {
+
+		JSONObject entityJsonOut;
+
+		// ******* Adding person ***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
+		try {
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
+
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
+
+			// Verifying entity in body.
+			assertEquals("diego@diegosousa.com",
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			// ******* Getting Person ***********
+
+			ClientResponse crGetPerson = getResourceGet("diego@diegosousa.com");
+
+			// Verifying status code
+			assertEquals(200, crGetPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crGetPerson.getType());
+
+			// Verifying entity in body.
+			assertEquals("diego",
+					new JSONObject(crGetPerson.getEntity(String.class))
+							.getString("name"));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
+
+	/**
+	 * Test method for
+	 * {@link br.pb.diego.sousa.rest.service.Rest#editPerson(java.lang.String, br.pb.diego.sousa.rest.entity.Person)}
+	 * .
+	 */
+	@Test
+	public final void testEditPerson() {
+
+		JSONObject entityJsonOut;
+
+		// ******* Adding Person ***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
+
+		try {
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
+
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
+
+			// Verifying entity in body.
+			assertEquals("diego@diegosousa.com",
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			// ******* Updating Person ***********
+
+			// Editing person and verifying status code
+			assertEquals(
+					204,
+					getResourcePut("diego@diegosousa.com",
+							createJson("Fulano", "fulano@diegosousa.com"))
+							.getStatus());
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person and checks if "diego" was edited.
+			ClientResponse crListAllPerson = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+			JSONArray jsonArray = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(1, jsonArray.length());
+			assertEquals("Fulano", jsonArray.getJSONObject(0).getString("name"));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Test method for
+	 * {@link br.pb.diego.sousa.rest.service.Rest#removePerson(java.lang.String)}
+	 * 
+	 */
+
+	@Test
+	public final void testRemovePerson() {
+
+		JSONObject entityJsonOut;
+		JSONObject entityJsonOutTwo;
+
+		// ******* AddObject***********
+
+		ClientResponse crAddPerson = getResourcePost(createJson("diego",
+				"diego@diegosousa.com"));
+		ClientResponse crAddPersonTwo = getResourcePost(createJson("maria",
+				"maria@diegosousa.com"));
+
+		// Verifying status code
+		assertEquals(201, crAddPerson.getStatus());
+		assertEquals(201, crAddPersonTwo.getStatus());
+
+		// Verifying Media Type
+		assertEquals(MediaType.valueOf(typeMsg), crAddPerson.getType());
+		assertEquals(MediaType.valueOf(typeMsg), crAddPersonTwo.getType());
+
+		try {
+			// Verifying Location in header.
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("diego", "diego@diegosousa.com")
+									.getString("mail"), crAddPerson
+							.getLocation().toString());
+
+			assertEquals(
+					UrlFull
+							+ pathPerson
+							+ createJson("maria", "maria@diegosousa.com")
+									.getString("mail"), crAddPersonTwo
+							.getLocation().toString());
+
+			entityJsonOut = new JSONObject(crAddPerson.getEntity(String.class));
+			entityJsonOutTwo = new JSONObject(
+					crAddPersonTwo.getEntity(String.class));
+
+			// Verifying entity in body.
+			assertEquals("diego@diegosousa.com",
+					entityJsonOut.getString("mail"));
+			assertEquals("diego", entityJsonOut.getString("name"));
+
+			assertEquals("maria@diegosousa.com",
+					entityJsonOutTwo.getString("mail"));
+			assertEquals("maria", entityJsonOutTwo.getString("name"));
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person.
+			ClientResponse crListAllPerson = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPerson.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg), crListAllPerson.getType());
+
+			JSONArray jsonArrayAllPersonOne = new JSONObject(
+					crListAllPerson.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(2, jsonArrayAllPersonOne.length());
+
+			// ******* Removing Person ***********
+
+			// Removing Object and testing code status.
+			assertEquals(204, getResourceDelete("diego@diegosousa.com")
+					.getStatus());
+
+			// ******* Getting the List All Person ***********
+
+			// Getting the List All Person.
+			ClientResponse crListAllPersonTwo = getResourceGetAll();
+
+			// Verifying status code
+			assertEquals(200, crListAllPersonTwo.getStatus());
+
+			// Verifying Media Type
+			assertEquals(MediaType.valueOf(typeMsg),
+					crListAllPersonTwo.getType());
+
+			JSONArray jsonArrayAllPersonTwo = new JSONObject(
+					crListAllPersonTwo.getEntity(String.class))
+					.getJSONArray("Person");
+
+			// Verifying entity in body.
+			assertEquals(1, jsonArrayAllPersonTwo.length());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Request using method HTTP GET for get All Person.
+	 * 
+	 * @return ClientResponse
+	 */
 
 	public ClientResponse getResourceGetAll() {
 		return service.path(resourcePath).path("person")
 				.get(ClientResponse.class);
 	}
 
-	public ClientResponse getResourcePost(Object jsonObject) {
+	/**
+	 * Request using method HTTP POST for add person.
+	 * 
+	 * @param jsonObject
+	 * @return ClientResponse
+	 */
+
+	public ClientResponse getResourcePost(JSONObject jsonObject) {
 		return service.path(resourcePath).path("person").accept(typeMsg)
 				.post(ClientResponse.class, jsonObject);
 	}
 
-	public ClientResponse getResourcePut(Object jsonObject) {
+	/**
+	 * Request using method HTTP PUT for edit all person.
+	 * 
+	 * @param JSONArray
+	 * @return ClientResponse
+	 */
+
+	public ClientResponse getResourcePutList(JSONArray jsonArray) {
 		return service.path(resourcePath).path("person").accept(typeMsg)
+				.put(ClientResponse.class, jsonArray);
+	}
+
+	/**
+	 * Request using method HTTP DELETE for removed all person.
+	 * 
+	 * @return ClientResponse
+	 */
+
+	public ClientResponse getResourceDeleteAll() {
+		return service.path(resourcePath).path("person")
+				.delete(ClientResponse.class);
+	}
+
+	/**
+	 * Request using method HTTP GET for get one person.
+	 * 
+	 * @param mail
+	 * @return ClientResponse
+	 */
+
+	public ClientResponse getResourceGet(String mail) {
+		return service.path(resourcePath).path("person").path(mail)
+				.get(ClientResponse.class);
+	}
+
+	/**
+	 * Request using method HTTP PUT for replace list all person.
+	 * 
+	 * @param mail
+	 * @param jsonObject
+	 * @return ClientResponse.
+	 */
+
+	public ClientResponse getResourcePut(String mail, JSONObject jsonObject) {
+		return service.path(resourcePath).path("person").path(mail)
 				.put(ClientResponse.class, jsonObject);
 	}
 
+	/**
+	 * Request using method HTTP DELETE for removed one person.
+	 * 
+	 * @param mail
+	 * @return ClientResponse.
+	 */
+
 	public ClientResponse getResourceDelete(String mail) {
-		return service.path(resourcePath).path("person")
-				.queryParam("mail", mail).delete(ClientResponse.class);
-	}
-
-	public ClientResponse getResourceClearList() {
-		return service.path(resourcePath).path("person").path("clearlist")
+		return service.path(resourcePath).path("person").path(mail)
 				.delete(ClientResponse.class);
-
 	}
 
+	/**
+	 * Method for create JSON with data of a person.
+	 * 
+	 * @param name
+	 * @param mail
+	 * @return JSONObject
+	 * 
+	 */
+
+	public JSONObject createJson(String name, String mail) {
+
+		if (entityJsonIn == null) {
+			entityJsonIn = new JSONObject();
+		}
+
+		try {
+			entityJsonIn.put("name", name);
+			entityJsonIn.put("mail", mail);
+		} catch (JSONException je) {
+			je.printStackTrace();
+		}
+		return entityJsonIn;
+	}
 }
